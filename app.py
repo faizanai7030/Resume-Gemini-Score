@@ -7,9 +7,18 @@ import streamlit as st
 
 st.set_page_config(page_title="Resume Analyzer", page_icon="📄", layout="centered")
 
-API_KEY = os.environ.get("GEMINI_API_KEY")
+def _get_api_key() -> str | None:
+    try:
+        if "GEMINI_API_KEY" in st.secrets:
+            return st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        pass
+    return os.environ.get("GEMINI_API_KEY")
+
+
+API_KEY = _get_api_key()
 if not API_KEY:
-    st.error("GEMINI_API_KEY is not set. Please add it to your secrets.")
+    st.error("GEMINI_API_KEY is not set. Add it to your Streamlit secrets or environment variables.")
     st.stop()
 
 genai.configure(api_key=API_KEY)
